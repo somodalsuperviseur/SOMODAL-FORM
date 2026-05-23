@@ -649,4 +649,188 @@ export default function App() {
                       direction: "rtl",
                       transition: "border-color 0.2s",
                     }}
-                    onFocus={(e) => (e.target.sty
+                    onFocus={(e) => (e.target.style.borderColor = BRAND.primary)}
+                    onBlur={(e) => (e.target.style.borderColor = error ? BRAND.primary : "#e0e0e0")}
+                    onKeyDown={(e) => e.key === "Enter" && go("next")}
+                  />
+                )}
+
+                {/* TEXTAREA */}
+                {step.type === "textarea" && (
+                  <textarea
+                    value={value || ""}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder={step.placeholder}
+                    rows={4}
+                    style={{
+                      width: "100%",
+                      padding: "12px 14px",
+                      fontSize: 14,
+                      border: `2px solid ${error ? BRAND.primary : "#e0e0e0"}`,
+                      borderRadius: 10,
+                      outline: "none",
+                      resize: "vertical",
+                      boxSizing: "border-box",
+                      direction: "rtl",
+                      fontFamily: "inherit",
+                      transition: "border-color 0.2s",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = BRAND.primary)}
+                    onBlur={(e) => (e.target.style.borderColor = error ? BRAND.primary : "#e0e0e0")}
+                  />
+                )}
+
+                {/* RADIO */}
+                {step.type === "radio" && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {step.options.map((opt) => (
+                      <label
+                        key={opt}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 12,
+                          padding: "12px 14px",
+                          borderRadius: 10,
+                          border: `2px solid ${value === opt ? BRAND.primary : "#e8e8e8"}`,
+                          background: value === opt ? `${BRAND.primary}10` : "#fafafa",
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                          direction: "rtl",
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name={step.id}
+                          value={opt}
+                          checked={value === opt}
+                          onChange={() => setValue(opt)}
+                          style={{ accentColor: BRAND.primary, width: 16, height: 16 }}
+                        />
+                        <span style={{ fontSize: 14, color: BRAND.dark }}>{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+
+                {/* CHECKBOX */}
+                {step.type === "checkbox" && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {step.options.map((opt) => {
+                      const checked = Array.isArray(value) && value.includes(opt);
+                      return (
+                        <label
+                          key={opt}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
+                            padding: "12px 14px",
+                            borderRadius: 10,
+                            border: `2px solid ${checked ? BRAND.primary : "#e8e8e8"}`,
+                            background: checked ? `${BRAND.primary}10` : "#fafafa",
+                            cursor: "pointer",
+                            transition: "all 0.15s ease",
+                            direction: "rtl",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => {
+                              const prev = Array.isArray(value) ? value : [];
+                              setValue(
+                                checked ? prev.filter((v) => v !== opt) : [...prev, opt]
+                              );
+                            }}
+                            style={{ accentColor: BRAND.primary, width: 16, height: 16 }}
+                          />
+                          <span style={{ fontSize: 14, color: BRAND.dark }}>{opt}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* MATRIX */}
+                {step.type === "matrix" && (
+                  <MatrixQuestion
+                    rows={step.rows}
+                    cols={step.cols}
+                    value={value || {}}
+                    onChange={setValue}
+                  />
+                )}
+
+                {/* Error */}
+                {error && (
+                  <div
+                    style={{
+                      marginTop: 10,
+                      color: BRAND.primary,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      direction: "rtl",
+                    }}
+                  >
+                    ⚠ {error}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer nav */}
+        {!isIntro && !isOutro && (
+          <div
+            style={{
+              padding: "16px 32px 28px",
+              display: "flex",
+              gap: 12,
+              justifyContent: "flex-end",
+              borderTop: "1px solid #f0f0f0",
+            }}
+          >
+            {currentStep > 1 && (
+              <button
+                onClick={() => go("back")}
+                style={{
+                  background: "transparent",
+                  border: `2px solid ${BRAND.light}`,
+                  borderRadius: 10,
+                  padding: "10px 24px",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: BRAND.gray,
+                  cursor: "pointer",
+                }}
+              >
+                ‹ رجوع
+              </button>
+            )}
+            <button
+              onClick={() => go("next")}
+              style={{
+                background: BRAND.primary,
+                color: BRAND.white,
+                border: "none",
+                borderRadius: 10,
+                padding: "10px 28px",
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: "pointer",
+                boxShadow: `0 4px 14px ${BRAND.primary}44`,
+                transition: "transform 0.15s ease",
+              }}
+              onMouseEnter={(e) => (e.target.style.transform = "scale(1.03)")}
+              onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+            >
+              {currentStep === steps.length - 2 ? "إرسال — Envoyer ✓" : "التالي — Suivant ›"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
